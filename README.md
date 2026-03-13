@@ -1,23 +1,34 @@
 # AI Engineering Rigor
 
-Reusable, deterministic AI skills for developer productivity.
+LLM-first code review skill for Python/FastAPI with a strict, structured output schema.
 
 ## Structure
-- `skills/code-review/python`
-- `skills/code-review/typescript`
+- `skills/code_review/python`
 
-## Skill discovery
+## Quickstart
 ```bash
-python cli.py list
+export LLM_PROVIDER=azure
+export LLM_API_KEY=your-key
+export LLM_ENDPOINT=your-endpoint
+export LLM_MODEL=gpt-4o-mini
+
+git diff HEAD~1 | python cli.py --stdin --pr "Add user auth endpoint"
 ```
 
-## Run a skill
+## CLI
 ```bash
-python cli.py run --skill-path skills/code-review/python --repo /path/to/repo
+# Review a git diff (string)
+python cli.py --diff "$(git diff HEAD~1)" --pr "Add user auth endpoint"
+
+# Review from stdin
+git diff HEAD~1 | python cli.py --stdin
+
+# JSON output
+git diff HEAD~1 | python cli.py --stdin --format json
 ```
 
 ## Output format
-Each skill returns JSON like:
+The review returns JSON like:
 ```json
 {
   "file": "repository",
