@@ -20,9 +20,8 @@ Zero dependencies. Just clone and use.
 Clone and open in Claude Code -- skills are auto-detected.
 
 ```
-# Review a PR (paste any GitHub or Azure DevOps PR link)
+# Review a PR (paste any GitHub PR link)
 /ai-rigor-review https://github.com/org/repo/pull/42
-/ai-rigor-review https://dev.azure.com/org/project/_git/repo/pullrequest/123
 
 # Review by PR number (uses config for org/project)
 /ai-rigor-review 42
@@ -90,14 +89,10 @@ Configure source control credentials, ignore patterns, and skill-specific settin
 
 # Source control (for PR review by number)
 source_control:
-  provider: ado                                    # ado | github
-  ado:
-    org_url: https://dev.azure.com/your-org        # your ADO instance
-    project: "Your Project"                         # default project
-
-  # github:
-  #   owner: your-org
-  #   repo: your-repo
+  provider: github
+  github:
+    owner: your-org
+    repo: your-repo
 
 # Review settings
 review:
@@ -175,7 +170,7 @@ cp -r .agents/skills/ai-rigor-* /your/repo/.agents/skills/    # Codex
 cp -r .ai-rigor /your/repo/.ai-rigor
 ```
 
-Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/config.yml` with your ADO/GitHub credentials.
+Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/config.yml` with your GitHub credentials.
 
 ## Repo Structure
 
@@ -199,7 +194,7 @@ benchmarks/                            # Token reduction benchmark
 - Reviews against **your team's standards**, not generic rules
 - Hits specific dimensions (security, auth, types, performance) that generic reviews miss
 - Context extraction keeps token cost down on large PRs
-- PR link support -- review any GitHub or ADO PR from the conversation
+- PR link support -- review any GitHub PR from the conversation
 - Works on any repo -- just copy the skill files
 
 **What it doesn't do:**

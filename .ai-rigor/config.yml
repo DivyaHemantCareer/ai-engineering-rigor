@@ -5,17 +5,12 @@
 # Source Control (for PR review)
 # ──────────────────────────────────────────────────────────────
 source_control:
-  # provider: github | ado (auto-detected from PR URLs if omitted)
-  provider: ado
+  # provider: github (auto-detected from PR URLs if omitted)
+  provider: github
 
-  ado:
-    org_url: https://dev.azure.com/your-org       # or https://yourorg.visualstudio.com
-    project: "Your Project"                         # default project name
-    # repo is auto-detected from git remote if omitted
-
-  # github:
-  #   owner: your-org
-  #   repo: your-repo                              # auto-detected from git remote if omitted
+  github:
+    owner: your-org
+    repo: your-repo                               # auto-detected from git remote if omitted
 
 # ──────────────────────────────────────────────────────────────
 # Review Settings

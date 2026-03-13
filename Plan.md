@@ -38,7 +38,7 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 - [x] Claude Code skills (`.claude/skills/ai-rigor-*/skill.md`)
 - [x] Codex skills (`.agents/skills/ai-rigor-*/SKILL.md`)
 - [x] 4 skills: review, coverage, commit, deps
-- [x] PR link support (GitHub + Azure DevOps)
+- [x] PR link support (GitHub)
 
 ### Phase 6 — Configuration
 - [x] `.ai-rigor/config.yml` — source control credentials, ignore patterns, skill settings
@@ -59,7 +59,7 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 - **4 agent skills** (Claude Code + Codex) with config support
 - **4 Python library skills** with registry
 - **Configurable** — team standards, source control credentials, ignore patterns
-- **PR review** — accepts GitHub/ADO links or PR numbers
+- **PR review** — accepts GitHub links or PR numbers
 - Zero external dependencies for agent skills
 
 ---
@@ -67,13 +67,13 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 ## Next Up
 
 ### Phase 8 — Work Item Context
-- Pull linked work items from ADO PRs (acceptance criteria as review context)
+- Pull linked work items from PRs (acceptance criteria as review context)
 - Pull linked GitHub issues
 - Manual `--ticket` argument support
 
 ### Phase 9 — CI Integration
 - GitHub Actions workflow that runs skills on PRs
-- Azure DevOps pipeline integration
+- CI pipeline integration
 - JSON output mode for machine-readable results
 
 ### Phase 10 — Language Expansion

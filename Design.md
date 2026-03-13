@@ -78,7 +78,7 @@ Both files are optional. Skills use sensible defaults without them.
 ### Input Detection
 
 The review skill auto-detects what it's reviewing:
-- **PR link** (GitHub or ADO URL) -- fetches metadata + diff via `gh` CLI or ADO MCP tools
+- **PR link** (GitHub URL) -- fetches metadata + diff via `gh` CLI
 - **PR number** -- uses `config.yml` credentials to resolve the PR
 - **Commit range** -- `git diff`
 - **File path** -- `git diff HEAD -- <path>`
