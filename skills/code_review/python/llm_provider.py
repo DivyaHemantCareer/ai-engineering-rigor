@@ -15,12 +15,14 @@ class LLMConfig:
     model: str                       # e.g. "gpt-4o-mini"
     endpoint: Optional[str] = None   # required for Azure
     api_version: Optional[str] = "2024-02-01"  # Azure API version
+    temperature: float = 0.1         # low temperature — deterministic review
+    max_tokens: int = 1500           # bounded response
 
     @classmethod
     def from_env(cls) -> "LLMConfig":
         """
         Load config from environment variables.
-        Useful for CLI and GitHub Actions usage.
+        Useful for CI pipelines and programmatic usage.
         """
         provider = os.getenv("LLM_PROVIDER", "azure")
         return cls(
@@ -28,7 +30,9 @@ class LLMConfig:
             api_key=os.getenv("LLM_API_KEY", ""),
             model=os.getenv("LLM_MODEL", "gpt-4o-mini"),
             endpoint=os.getenv("LLM_ENDPOINT"),
-            api_version=os.getenv("LLM_API_VERSION", "2024-02-01")
+            api_version=os.getenv("LLM_API_VERSION", "2024-02-01"),
+            temperature=float(os.getenv("LLM_TEMPERATURE", "0.1")),
+            max_tokens=int(os.getenv("LLM_MAX_TOKENS", "1500")),
         )
 
 
@@ -55,6 +59,8 @@ class AzureAIFoundryProvider(LLMProvider):
             api_version=config.api_version
         )
         self.model = config.model
+        self.temperature = config.temperature
+        self.max_tokens = config.max_tokens
 
     def complete(self, system_prompt: str, user_prompt: str) -> str:
         response = self.client.chat.completions.create(
@@ -63,8 +69,8 @@ class AzureAIFoundryProvider(LLMProvider):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.1,      # low temperature — deterministic review
-            max_tokens=1500       # bounded response
+            temperature=self.temperature,
+            max_tokens=self.max_tokens
         )
         return response.choices[0].message.content
 
@@ -79,6 +85,8 @@ class OpenAIProvider(LLMProvider):
 
         self.client = OpenAI(api_key=config.api_key)
         self.model = config.model
+        self.temperature = config.temperature
+        self.max_tokens = config.max_tokens
 
     def complete(self, system_prompt: str, user_prompt: str) -> str:
         response = self.client.chat.completions.create(
@@ -87,8 +95,8 @@ class OpenAIProvider(LLMProvider):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.1,
-            max_tokens=1500
+            temperature=self.temperature,
+            max_tokens=self.max_tokens
         )
         return response.choices[0].message.content
 

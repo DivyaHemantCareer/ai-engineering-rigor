@@ -4,3 +4,9 @@ __pycache__/
 .env.*
 .venv/
 artifacts/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+uv.lock
+.claude/settings.local.json

@@ -50,3 +50,44 @@ class CodeReviewResult(BaseModel):
     issues: List[Issue]
     summary_by_type: dict[str, SummaryByType]
     recommendation: Recommendation
+
+
+class MultiFileReviewResult(BaseModel):
+    """Aggregated review result across multiple files."""
+    results: List[CodeReviewResult]
+    overall_recommendation: Recommendation
+    total_issues: int = Field(..., ge=0)
+    files_reviewed: int = Field(..., ge=0)
+
+    @classmethod
+    def from_results(cls, results: List[CodeReviewResult]) -> "MultiFileReviewResult":
+        """Aggregate individual file results into a multi-file result."""
+        if not results:
+            return cls(
+                results=[],
+                overall_recommendation=Recommendation.APPROVE,
+                total_issues=0,
+                files_reviewed=0,
+            )
+
+        total_issues = sum(len(r.issues) for r in results)
+
+        # Overall recommendation = worst recommendation across all files
+        priority = [
+            Recommendation.BLOCK_MERGE,
+            Recommendation.REQUEST_CHANGES,
+            Recommendation.APPROVE_WITH_COMMENTS,
+            Recommendation.APPROVE,
+        ]
+        overall = Recommendation.APPROVE
+        for rec in priority:
+            if any(r.recommendation == rec for r in results):
+                overall = rec
+                break
+
+        return cls(
+            results=results,
+            overall_recommendation=overall,
+            total_issues=total_issues,
+            files_reviewed=len(results),
+        )

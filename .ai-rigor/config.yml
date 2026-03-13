@@ -1,0 +1,67 @@
+# AI Engineering Rigor — Repo Configuration
+# Drop this file at .ai-rigor/config.yml in any repo to configure the skills.
+
+# ──────────────────────────────────────────────────────────────
+# Source Control (for PR review)
+# ──────────────────────────────────────────────────────────────
+source_control:
+  # provider: github | ado (auto-detected from PR URLs if omitted)
+  provider: ado
+
+  ado:
+    org_url: https://dev.azure.com/your-org       # or https://yourorg.visualstudio.com
+    project: "Your Project"                         # default project name
+    # repo is auto-detected from git remote if omitted
+
+  # github:
+  #   owner: your-org
+  #   repo: your-repo                              # auto-detected from git remote if omitted
+
+# ──────────────────────────────────────────────────────────────
+# Review Settings
+# ──────────────────────────────────────────────────────────────
+review:
+  # Path to team standards file (relative to repo root)
+  standards_file: .ai-rigor/standards.md
+
+  # Languages to review (auto-detected from file extensions if omitted)
+  # languages: [python, typescript, go]
+
+  # Severity threshold — only report issues at or above this level
+  # min_severity: LOW                              # CRITICAL | HIGH | MEDIUM | LOW
+
+  # Files/patterns to skip during review
+  ignore:
+    - "*.generated.*"
+    - "*.min.js"
+    - "migrations/"
+    - "vendor/"
+    - "node_modules/"
+    - "__pycache__/"
+
+# ──────────────────────────────────────────────────────────────
+# Commit Quality Settings
+# ──────────────────────────────────────────────────────────────
+commit:
+  # Enforce conventional commits? (default: true)
+  conventional: true
+
+  # Allowed commit types (default: standard conventional commit types)
+  # types: [feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert]
+
+  # Max subject line length (default: 72)
+  max_subject_length: 72
+
+# ──────────────────────────────────────────────────────────────
+# Dependency Audit Settings
+# ──────────────────────────────────────────────────────────────
+deps:
+  # Dependency files to check (auto-detected if omitted)
+  # files: [requirements.txt, pyproject.toml, package.json]
+
+  # Known-good packages that should not be flagged
+  allowed:
+    - openai
+    - pydantic
+    - fastapi
+    - pytest

@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Sequence
+
+from skills.extractors.base import CodeExtractor
 
 
 @dataclass
@@ -15,12 +17,16 @@ class CodeContext:
     raw_diff: str                   # original diff for reference
 
 
-class CodeContextExtractor:
+class CodeContextExtractor(CodeExtractor):
     """
     Layer 1 — Extracts minimal, signal-rich context from a git diff.
     No LLM involved — pure Python parsing.
     Goal: pass only what matters to the LLM, not the entire file.
     """
+
+    @property
+    def language(self) -> str:
+        return "python"
 
     def extract(self, diff: str) -> CodeContext:
         return CodeContext(
@@ -105,6 +111,23 @@ class CodeContextExtractor:
             if clean.startswith("@"):
                 decorators.append(clean)
         return list(set(decorators))
+
+    def extract_all(self, diff: str) -> List[CodeContext]:
+        """
+        Split a multi-file diff on 'diff --git' boundaries
+        and extract context for each file segment.
+        """
+        segments = re.split(r"(?=^diff --git )", diff, flags=re.MULTILINE)
+        contexts = []
+        for segment in segments:
+            segment = segment.strip()
+            if not segment:
+                continue
+            contexts.append(self.extract(segment))
+        # If no 'diff --git' headers found, treat as single-file diff
+        if not contexts:
+            contexts.append(self.extract(diff))
+        return contexts
 
     def to_prompt_payload(self, context: CodeContext) -> str:
         """

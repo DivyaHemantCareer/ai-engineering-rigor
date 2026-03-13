@@ -73,28 +73,19 @@ print(result.risk_score)       # 0-100
 
 ---
 
-### CLI Usage
+### Agent Skill Usage
 
-```bash
-# Set env vars
-export LLM_PROVIDER=azure
-export LLM_API_KEY=your-key
-export LLM_ENDPOINT=your-endpoint
-export LLM_MODEL=gpt-4o-mini
+```
+# Claude Code
+/ai-rigor-review HEAD~1
 
-# Review latest commit diff
-git diff HEAD~1 | python cli.py --stdin --pr "Add auth endpoint"
-
-# Review specific file
-git diff HEAD~1 -- app/routers/user.py | python cli.py --stdin
-
-# JSON output
-git diff HEAD~1 | python cli.py --stdin --format json
+# Codex
+$ai-rigor-review
 ```
 
 ---
 
-### LLM Configuration
+### LLM Configuration (Python Library)
 
 Model-agnostic — bring your own LLM:
 

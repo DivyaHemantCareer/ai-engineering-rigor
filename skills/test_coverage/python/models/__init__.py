@@ -1,0 +1,1 @@
+"""Test coverage result models."""
