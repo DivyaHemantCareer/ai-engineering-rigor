@@ -7,6 +7,7 @@ name = "ai-engineering-rigor"
 version = "0.1.0"
 description = "Developer tools for enforcing engineering rigor via LLM-powered code analysis"
 requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
 dependencies = [
     "openai>=1.0.0",
     "pydantic>=2.0.0",

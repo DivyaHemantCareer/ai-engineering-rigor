@@ -4,6 +4,24 @@ Portable engineering rigor skills for Claude Code and Codex. Use them in any rep
 
 Agent skills are zero-dependency: clone, copy, and use. The optional Python library under `skills/` has its own runtime dependencies for CI/programmatic use.
 
+## Who This Is For
+
+Use this repo if you want AI coding agents to follow repeatable engineering standards instead of one-off prompts.
+
+It is especially useful for:
+
+- Solo developers who want a consistent second-opinion reviewer.
+- Teams adopting Codex or Claude Code across multiple repos.
+- Teams that want AI review behavior to reflect local standards, not generic defaults.
+- Projects that need lightweight QA, infra, release, and security handoff discipline.
+
+The short version:
+
+```text
+Skills = reusable generic workflows
+.ai-rigor/ = team-specific behavior layer
+```
+
 ## Use In Any Project
 
 This repo ships skills in both supported layouts:
@@ -23,6 +41,23 @@ Optional team-specific behavior lives in `.ai-rigor/`:
 The skills are generic and portable. Add `.ai-rigor/` when you want them to follow your team's standards, repo conventions, ignore patterns, source-control settings, and approved dependency rules.
 
 You can copy all skills or only the ones your project needs. No API keys are required for agent skills because the agent you are already using does the reasoning.
+
+## Copy Only What You Need
+
+Every skill is self-contained. Copy only the folders your project needs:
+
+```bash
+# Just code review for Codex
+mkdir -p /your/repo/.agents/skills
+cp -r .agents/skills/ai-rigor-review /your/repo/.agents/skills/
+
+# Code review + security for Claude Code
+mkdir -p /your/repo/.claude/skills
+cp -r .claude/skills/ai-rigor-review /your/repo/.claude/skills/
+cp -r .claude/skills/ai-rigor-security /your/repo/.claude/skills/
+```
+
+If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 
 ## Skills
 
@@ -142,6 +177,12 @@ Write your coding standards in plain markdown. The review skill uses this **inst
 - Test coverage required for all new public functions
 ```
 
+Example standards you can adapt:
+
+- [Generic team standards](examples/standards/generic-team.md)
+- [Python / FastAPI standards](examples/standards/python-fastapi.md)
+- [TypeScript / React standards](examples/standards/typescript-react.md)
+
 ### Repo Config (`.ai-rigor/config.yml`)
 
 Configure source control credentials, ignore patterns, and skill-specific settings.
@@ -204,6 +245,14 @@ deps:
 
 Those reference files are adapted from Apache-licensed security-best-practices material. Keep `LICENSE.txt` with the `ai-rigor-security` skill when copying or redistributing it.
 
+## Example Outputs
+
+Sample reports show the expected shape without needing to run anything:
+
+- [Code review output](examples/outputs/ai-rigor-review.md)
+- [Coverage output](examples/outputs/ai-rigor-coverage.md)
+- [Security output](examples/outputs/ai-rigor-security.md)
+
 ## How It Works
 
 The review and analysis skills follow the same pattern:
@@ -214,6 +263,12 @@ The review and analysis skills follow the same pattern:
 4. **Report** -- structured output with severity, line numbers, and actionable fixes
 
 No API keys needed. The agent you're already running IS the LLM.
+
+## Python Library Is Optional
+
+The primary product is the portable agent skills under `.agents/skills/` and `.claude/skills/`.
+
+The Python package under `skills/` is secondary. Use it only when you want CI or programmatic workflows that call a model provider from code. That path uses dependencies from `pyproject.toml` / `requirements.txt`; the agent skills do not.
 
 ## Does It Actually Save Tokens?
 
@@ -261,6 +316,8 @@ Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/c
 .claude/skills/ai-rigor-*/references/  # Optional bundled templates/guidance
 .agents/skills/ai-rigor-*/references/  # Optional bundled templates/guidance
 
+examples/outputs/                      # Sample skill outputs
+examples/standards/                    # Example team-specific standards
 skills/                                # Python library (CI/programmatic use)
 tests/                                 # 66 tests
 benchmarks/                            # Token reduction benchmark
@@ -280,3 +337,7 @@ benchmarks/                            # Token reduction benchmark
 - Replace human reviewers -- it's a second opinion, not a gate
 - Guarantee finding all bugs -- LLMs miss things
 - Work offline -- requires Claude Code or Codex running
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE).
