@@ -88,6 +88,8 @@ The review skill auto-detects what it's reviewing:
 
 ## Skills
 
+### Review and Analysis Skills
+
 ### Code Review (`/ai-rigor-review`)
 
 Extracts changed hunks, function signatures, imports, decorators, and class definitions from a git diff. Reviews against 5 dimensions: security, framework patterns, type safety, performance, and code quality. Outputs risk score, security score, issue list, and merge recommendation.
@@ -103,6 +105,30 @@ Parses commit messages against conventional commit format (`type(scope): descrip
 ### Dependency Audit (`/ai-rigor-deps`)
 
 Parses added/removed lines from dependency file diffs (requirements.txt, pyproject.toml). Flags unpinned versions, known CVEs, typosquats. Cross-references against actual imports in the codebase.
+
+### Delivery Rigor Skills
+
+These are agent-only workflow skills. They do not currently have Python library implementations because their value is in guiding an interactive coding, validation, infrastructure, release, or security-hardening session rather than extracting a fixed payload.
+
+### Development Rigor (`/ai-rigor-dev`)
+
+Guides production-ready implementation for a single task: scope analysis, minimal code changes, tests, validation, and QA/Infra handoff packets.
+
+### QA Rigor (`/ai-rigor-qa`)
+
+Builds acceptance-criteria test matrices, records reproducible defects, retests fixes, and issues pass/fail QA sign-off.
+
+### Infrastructure Rigor (`/ai-rigor-infra`)
+
+Guides IaC or infrastructure maintenance work with least-privilege, managed identity, encryption, dry-run validation, and infra readiness sign-off.
+
+### Release Rigor (`/ai-rigor-release`)
+
+Guides release planning, artifact traceability, test/stage deployment validation, production approval gates, smoke checks, and rollback reporting.
+
+### Security Rigor (`/ai-rigor-security`)
+
+Adapts security-best-practices guidance into the `ai-rigor-*` family. Loads language/framework-specific references for secure implementation, security reports, and focused hardening.
 
 ---
 
@@ -173,6 +199,7 @@ Key patterns:
 - Agent skills: `.claude/skills/` (Claude Code) and `.agents/skills/` (Codex)
 - Python library: `skills/<skill_name>/` or `skills/<skill_name>/<language>/`
 - Each Python skill has `SKILL.md`, `skill.py`, `models/`, and optionally `extractors/`, `layers/`
+- Agent-only workflow skills may include `references/` for handoff templates or security guidance
 - Shared utilities: `skills/shared/`
 - Tests: `tests/test_<module>.py`
 - Benchmarks: `benchmarks/`

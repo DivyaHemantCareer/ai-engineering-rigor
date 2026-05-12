@@ -51,12 +51,20 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 - [x] Real diffs + synthetic production-like scenarios
 - [x] Results in README
 
+### Phase 8 — Delivery Rigor Agent Skills
+- [x] Development rigor skill (`ai-rigor-dev`)
+- [x] QA rigor skill (`ai-rigor-qa`)
+- [x] Infrastructure rigor skill (`ai-rigor-infra`)
+- [x] Release rigor skill (`ai-rigor-release`)
+- [x] Security rigor skill (`ai-rigor-security`) adapted from security best-practices guidance
+- [x] Codex and Claude Code skill variants with bundled templates/references
+
 ---
 
 ## Current State
 
 - **66 tests, all passing**
-- **4 agent skills** (Claude Code + Codex) with config support
+- **9 agent skills** (Claude Code + Codex): 4 review/analysis skills and 5 delivery rigor skills
 - **4 Python library skills** with registry
 - **Configurable** — team standards, source control credentials, ignore patterns
 - **PR review** — accepts GitHub links or PR numbers
@@ -66,22 +74,22 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 
 ## Next Up
 
-### Phase 8 — Work Item Context
+### Phase 9 — Work Item Context
 - Pull linked work items from PRs (acceptance criteria as review context)
 - Pull linked GitHub issues
 - Manual `--ticket` argument support
 
-### Phase 9 — CI Integration
+### Phase 10 — CI Integration
 - GitHub Actions workflow that runs skills on PRs
 - CI pipeline integration
 - JSON output mode for machine-readable results
 
-### Phase 10 — Language Expansion
+### Phase 11 — Language Expansion
 - JavaScript/TypeScript extractors (reuse same skill pattern)
 - Go extractors
 - Language auto-detection from diff file extensions
 
-### Phase 11 — Skill Composition
+### Phase 12 — Skill Composition
 - Run all 4 skills in sequence on a PR (`/ai-rigor-full`)
 - Aggregate results into a single report
 - Configurable skill selection per repo
@@ -96,6 +104,7 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 | `.ai-rigor/standards.md` | Team coding standards — replaces built-in defaults |
 | `.claude/skills/ai-rigor-*/skill.md` | Claude Code agent skills |
 | `.agents/skills/ai-rigor-*/SKILL.md` | Codex agent skills |
+| `.agents/skills/ai-rigor-security/references/` | Bundled security best-practice references |
 | `skills/code_review/python/extractors/code_context.py` | Core extractor — pattern all future extractors follow |
 | `skills/code_review/python/skill.py` | Reference `Skill` implementation |
 | `skills/code_review/python/llm_provider.py` | LLM strategy — shared across Python library skills |
