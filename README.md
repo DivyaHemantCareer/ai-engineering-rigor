@@ -10,10 +10,10 @@ Use this repo if you want AI coding agents to follow repeatable engineering stan
 
 It is especially useful for:
 
+- Projects that need lightweight dev, QA, infra, release, and security handoff discipline.
 - Solo developers who want a consistent second-opinion reviewer.
 - Teams adopting Codex or Claude Code across multiple repos.
 - Teams that want AI review behavior to reflect local standards, not generic defaults.
-- Projects that need lightweight QA, infra, release, and security handoff discipline.
 
 The short version:
 
