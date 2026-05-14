@@ -87,19 +87,25 @@ If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 From this repo:
 
 ```bash
-# Codex
-mkdir -p /your/repo/.agents/skills
-cp -r .agents/skills/ai-rigor-* /your/repo/.agents/skills/
+# Install all skills for Codex and Claude Code
+scripts/install.sh --target /your/repo
 
-# Claude Code
-mkdir -p /your/repo/.claude/skills
-cp -r .claude/skills/ai-rigor-* /your/repo/.claude/skills/
+# Install only Codex skills
+scripts/install.sh --target /your/repo --platform codex
 
-# Optional team config
-cp -r .ai-rigor /your/repo/.ai-rigor
+# Install selected skills with optional team config
+scripts/install.sh --target /your/repo --skills review,security --with-config
 ```
 
+The install script only copies files. It does not install packages or dependencies.
+
 Then open `/your/repo` in Codex or Claude Code. Skills are auto-detected from the copied folders.
+
+To see all options:
+
+```bash
+scripts/install.sh --help
+```
 
 ### Claude Code
 
@@ -291,7 +297,13 @@ uv run --extra dev python benchmarks/token_benchmark.py
 
 ## Publishing to Another Repo
 
-Copy the skills and optionally the config template. You can copy all skills or a subset:
+Use the install script:
+
+```bash
+scripts/install.sh --target /your/repo --platform both --with-config
+```
+
+Or copy the skills and optionally the config template manually. You can copy all skills or a subset:
 
 ```bash
 # Skills (pick your platform)
@@ -318,6 +330,7 @@ Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/c
 
 examples/outputs/                      # Sample skill outputs
 examples/standards/                    # Example team-specific standards
+scripts/install.sh                     # Dependency-free installer
 skills/                                # Python library (CI/programmatic use)
 tests/                                 # 66 tests
 benchmarks/                            # Token reduction benchmark
