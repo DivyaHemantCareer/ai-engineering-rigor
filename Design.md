@@ -138,7 +138,7 @@ The skills are delivered as markdown prompts that run inside Claude Code or Code
 
 | Platform | Location | Invocation |
 |----------|----------|------------|
-| Claude Code | `.claude/skills/ai-rigor-*/skill.md` | `/ai-rigor-review HEAD~1` |
+| Claude Code | `.claude/skills/ai-rigor-*/SKILL.md` | `/ai-rigor-review HEAD~1` |
 | Codex | `.agents/skills/ai-rigor-*/SKILL.md` | `$ai-rigor-review` |
 
 Skills are auto-detected when the repo is opened. They can also be installed globally.
@@ -174,7 +174,7 @@ Key patterns:
 
 ### Adding a New Skill (Agent)
 
-1. Create `skill.md` (Claude) or `SKILL.md` (Codex) with YAML frontmatter
+1. Create `SKILL.md` (both Claude Code and Codex; the exact uppercase name is required on case-sensitive file systems) with YAML frontmatter
 2. Define extraction phase (what to `git diff` / `grep` / `read`)
 3. Define reasoning phase (what standards to check against)
 4. Define output format (structured markdown)
