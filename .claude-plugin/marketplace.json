@@ -1,0 +1,18 @@
+{
+  "name": "ai-engineering-rigor",
+  "description": "Engineering rigor skills for Claude Code: review, coverage, commits, dependencies, security, and delivery workflows.",
+  "owner": {
+    "name": "Divya Hemant",
+    "url": "https://github.com/DivyaHemantCareer"
+  },
+  "plugins": [
+    {
+      "name": "ai-rigor",
+      "source": "./",
+      "description": "Portable engineering rigor skills for Claude Code, configured per repo through .ai-rigor/.",
+      "skills": [
+        "./.claude/skills/"
+      ]
+    }
+  ]
+}

@@ -30,6 +30,7 @@ This repo ships skills in both supported layouts:
 |----------|-----------|---------|------------|
 | Codex | `.agents/skills/ai-rigor-*` | `/your/repo/.agents/skills/` | `$ai-rigor-review` |
 | Claude Code | `.claude/skills/ai-rigor-*` | `/your/repo/.claude/skills/` | `/ai-rigor-review` |
+| Claude Code (plugin) | Plugin marketplace — see [Quickstart](#claude-code-plugin-recommended) | Nothing copied | `/ai-rigor:ai-rigor-review` |
 
 Optional team-specific behavior lives in `.ai-rigor/`:
 
@@ -82,7 +83,37 @@ If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 
 ## Quickstart
 
-### Add To A Repo
+### Claude Code Plugin (recommended)
+
+Install once and use the skills in every repository, without copying files. Each repository still supplies its own `.ai-rigor/` standards and config.
+
+```text
+/plugin marketplace add DivyaHemantCareer/ai-engineering-rigor
+/plugin install ai-rigor@ai-engineering-rigor
+```
+
+Plugin skills are namespaced: `/ai-rigor:ai-rigor-review`, `/ai-rigor:ai-rigor-dev`, and so on. Claude also invokes them automatically when a task matches a skill's description.
+
+To have every contributor of a repository offered the plugin automatically, commit this to that repository's `.claude/settings.json`:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "ai-engineering-rigor": {
+      "source": { "source": "github", "repo": "DivyaHemantCareer/ai-engineering-rigor" }
+    }
+  },
+  "enabledPlugins": {
+    "ai-rigor@ai-engineering-rigor": true
+  }
+}
+```
+
+The plugin is versioned in `.claude-plugin/plugin.json`; installed copies update when that version changes. The marketplace entry loads only `.claude/skills/`, so the optional Python library under `skills/` is not exposed as plugin skills.
+
+### Add To A Repo (copy files)
+
+Use this when the repository must be self-contained (for example, Codex users or offline environments).
 
 From this repo:
 
@@ -321,6 +352,8 @@ Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/c
 ## Repo Structure
 
 ```
+.claude-plugin/plugin.json             # Claude Code plugin manifest (ai-rigor)
+.claude-plugin/marketplace.json        # Plugin marketplace (ai-engineering-rigor)
 .ai-rigor/                             # Team config (copy to any repo)
   config.yml                           # Source control, ignore patterns, settings
   standards.md                         # Team coding standards

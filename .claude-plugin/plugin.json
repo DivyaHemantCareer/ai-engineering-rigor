@@ -1,0 +1,15 @@
+{
+  "name": "ai-rigor",
+  "displayName": "AI Engineering Rigor",
+  "version": "0.2.0",
+  "description": "Portable engineering rigor skills: code review, test coverage, commit quality, dependency audit, security, and dev/QA/infra/release delivery discipline. Team standards come from each repo's .ai-rigor/ folder.",
+  "author": {
+    "name": "Divya Hemant",
+    "url": "https://github.com/DivyaHemantCareer"
+  },
+  "homepage": "https://github.com/DivyaHemantCareer/ai-engineering-rigor",
+  "repository": "https://github.com/DivyaHemantCareer/ai-engineering-rigor",
+  "license": "Apache-2.0",
+  "keywords": ["code-review", "testing", "security", "dependencies", "commits", "qa", "release", "engineering-standards"],
+  "skills": "./.claude/skills/"
+}
