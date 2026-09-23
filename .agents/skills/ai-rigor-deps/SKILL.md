@@ -1,12 +1,14 @@
 ---
 name: ai-rigor-deps
-description: Audit dependency changes for security risk -- unpinned versions, known vulnerabilities, unnecessary packages. Use when the user asks about dependency changes, supply chain risk, or package security. Reads allowed packages from .ai-rigor/config.yml.
+description: Audit dependency changes for security risk -- unpinned versions, lockfile drift, known vulnerabilities, unnecessary packages. Supports Python, npm/pnpm/Yarn, and Go. Use when the user asks about dependency changes, supply chain risk, or package security. Reads allowed packages from .ai-rigor/config.yml.
 argument-hint: [commit-range] -- defaults to HEAD~1
 ---
 
 # AI Engineering Rigor -- Dependency Audit
 
 Audit dependency changes in `$ARGUMENTS` (default: `HEAD~1`).
+
+This skill is read-only. Never run a command that installs, updates, or removes packages (`pip install`, `uv sync`, `npm install`, `npm ci`, `pnpm install`, `yarn`, `go get`) unless the user explicitly approves it.
 
 ## Phase 0: Load Config
 
@@ -16,62 +18,88 @@ Check for `.ai-rigor/config.yml`. If it exists, read the `deps` section for:
 
 ## Phase 1: Get Dependency Diff
 
+Auto-detect changed manifest and lock files, including workspace/monorepo subfolders:
+
 ```
-git diff $ARGUMENTS -- requirements*.txt pyproject.toml setup.py setup.cfg Pipfile poetry.lock package.json
+git diff --name-only $ARGUMENTS
 ```
 
-If config specifies `deps.files`, check those files instead.
+| Ecosystem | Manifests | Lockfiles |
+|-----------|-----------|-----------|
+| Python | `requirements*.txt`, `pyproject.toml`, `setup.py`, `setup.cfg`, `Pipfile` | `poetry.lock`, `uv.lock`, `Pipfile.lock` |
+| JavaScript / TypeScript | `package.json` (root and workspaces) | `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock` |
+| Go | `go.mod` | `go.sum` |
+
+Then `git diff $ARGUMENTS -- <files>`. If config specifies `deps.files`, check those files instead.
 
 If no dependency files changed, report "No dependency changes detected" and stop.
 
 ## Phase 2: Parse Changes
 
-- Lines with `+` (not `+++`) = added
-- Lines with `-` (not `---`) = removed
-- Extract: package name, version specifier
+- Lines with `+` (not `+++`) = added; lines with `-` (not `---`) = removed
+- For JSON manifests, compare `dependencies`, `devDependencies`, `peerDependencies`, and `optionalDependencies` by key
+- Extract: package name, version specifier, and (for workspaces) which workspace changed
 
 ## Phase 3: Risk Assessment
 
-For each **added** dependency:
+For each **added or version-changed** dependency:
 
-| Pattern | Risk |
-|---------|------|
-| `package==1.2.3` | LOW -- exact pin |
-| `package>=1.2,<2.0` | LOW -- bounded |
-| `package>=1.2` | MEDIUM -- unbounded upper |
-| `package` (no version) | HIGH -- unpinned |
+| Ecosystem | Pattern | Risk |
+|-----------|---------|------|
+| Python | `package==1.2.3` | LOW -- exact pin |
+| Python | `package>=1.2,<2.0` | LOW -- bounded |
+| Python | `package>=1.2` | MEDIUM -- unbounded upper |
+| Python | `package` (no version) | HIGH -- unpinned |
+| npm | `1.2.3` | LOW -- exact pin |
+| npm | `~1.2.3` / `^1.2.3` | LOW if lockfile committed, else MEDIUM; MEDIUM if standards require exact pins |
+| npm | `*`, `latest`, `>=`, git/URL/`file:` spec | HIGH -- unbounded or unverifiable |
+| Go | tagged `vX.Y.Z` | LOW |
+| Go | pseudo-version / `replace` to a fork or local path | MEDIUM -- review |
+
+Cross-ecosystem checks:
+- **Lockfile drift** -- manifest changed without its lockfile (or the reverse) = HIGH
+- **Install scripts** -- new npm package with `hasInstallScript` in the lockfile, or a new `postinstall`/`preinstall` = MEDIUM, review
+- Known CVEs for the added versions
+- Typosquat risk (similar names to popular packages)
+- License compatibility when the project states a license policy
+- Is it necessary, or does the standard library / an existing dependency cover this?
 
 Skip packages listed in `deps.allowed` from config -- these are pre-approved.
 
-Also check:
-- Known CVEs for recent versions
-- Typosquat risk (similar names to popular packages)
-- Is it necessary, or does stdlib/existing deps cover this?
-
-For **removed** dependencies:
-- Grep the codebase for `import {package}` -- still imported = broken removal
-
 ## Phase 4: Codebase Cross-Reference
 
-For each new dep, search for `import {package}` or `from {package}`. Flag:
-- Added but never imported = potentially unnecessary
+Search imports for each added or removed dependency:
+
+| Ecosystem | Import patterns |
+|-----------|-----------------|
+| Python | `import {package}`, `from {package}` |
+| JavaScript / TypeScript | `from "{package}"`, `require("{package}")`, `import("{package}")` |
+| Go | `"{module path}"` in import blocks |
+
+Flag:
+- Added but never imported = potentially unnecessary (check config files and CLI usage before concluding)
 - Removed but still imported = broken removal
 
-## Phase 5: Output
+## Phase 5: Vulnerability Scan (read-only, optional)
+
+Only when dependencies are already installed locally, run the ecosystem's read-only audit (`pip-audit` if present, `npm audit --audit-level=high`, `pnpm audit`, `yarn audit`, `govulncheck` if present). Otherwise state that no local audit was run.
+
+## Phase 6: Output
 
 ```
 ## Dependency Audit
 
 **Config**: {.ai-rigor/config.yml | defaults}
+**Ecosystems**: {detected}
 **Allowed (pre-approved)**: {list from config, or "none configured"}
 
 ### Changes
 
-| Action | Package | Version | Risk |
-|--------|---------|---------|------|
-| Added | boto3 | (unpinned) | HIGH |
-| Added | pyjwt | >=2.0.0 | LOW |
-| Removed | requests | >=2.28.0 | -- |
+| Action | Ecosystem | Package | Version | Risk |
+|--------|-----------|---------|---------|------|
+| Added | Python | boto3 | (unpinned) | HIGH |
+| Added | npm | zod | 4.1.0 | LOW |
+| Removed | Python | requests | >=2.28.0 | -- |
 
 ### Risk Flags
 
@@ -84,7 +112,11 @@ No version specifier. Future install could pull breaking version.
 | Package | Imported? | Files |
 |---------|-----------|-------|
 | boto3 | Yes | app/storage.py |
-| pyjwt | No | (may be unused) |
+| zod | Yes | src/schemas.ts |
+| requests | Still imported | app/client.py -- broken removal |
+
+### Vulnerability Scan
+{command run and result, or "not run -- dependencies not installed locally"}
 
 ### Summary
 | Metric | Value |
@@ -94,3 +126,10 @@ No version specifier. Future install could pull breaking version.
 | High / Medium / Low Risk | {N} / {N} / {N} |
 | **Overall Risk** | **{HIGH/MEDIUM/LOW}** |
 ```
+
+## Rules
+
+- Only flag **real** risks -- don't flag well-known, pinned packages
+- Pre-approved packages from config are listed but not flagged
+- Consider transitive/peer dependency implications for removals
+- Keep suggestions actionable with specific version pins

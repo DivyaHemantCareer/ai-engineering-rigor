@@ -66,9 +66,9 @@ If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 | Skill | Claude Code | Codex | What it does |
 |-------|-------------|-------|-------------|
 | **Code Review** | `/ai-rigor-review` | `$ai-rigor-review` | Security, performance, quality review. Accepts PR links, commits, or files. |
-| **Test Coverage** | `/ai-rigor-coverage` | `$ai-rigor-coverage` | Find changed functions missing tests, suggest specific test cases |
+| **Test Coverage** | `/ai-rigor-coverage` | `$ai-rigor-coverage` | Find changed functions missing tests, suggest specific test cases (Python, JavaScript/TypeScript, Go) |
 | **Commit Quality** | `/ai-rigor-commit` | `$ai-rigor-commit` | Conventional commit format, scope/file alignment, rewrite suggestions |
-| **Dependency Audit** | `/ai-rigor-deps` | `$ai-rigor-deps` | Unpinned versions, CVEs, unused additions, broken removals |
+| **Dependency Audit** | `/ai-rigor-deps` | `$ai-rigor-deps` | Unpinned versions, lockfile drift, CVEs, unused additions, broken removals (pip/uv, npm/pnpm/Yarn, Go modules) |
 
 ### Delivery Rigor
 
