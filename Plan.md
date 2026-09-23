@@ -35,7 +35,7 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 - [x] All registered in `SkillRegistry`, each with SKILL.md, extractor tests, integration tests
 
 ### Phase 5 — Agent Skills
-- [x] Claude Code skills (`.claude/skills/ai-rigor-*/skill.md`)
+- [x] Claude Code skills (`.claude/skills/ai-rigor-*/SKILL.md`)
 - [x] Codex skills (`.agents/skills/ai-rigor-*/SKILL.md`)
 - [x] 4 skills: review, coverage, commit, deps
 - [x] PR link support (GitHub)
@@ -102,7 +102,7 @@ A collection of engineering rigor skills for Claude Code and Codex. The core dif
 |------|------|
 | `.ai-rigor/config.yml` | Repo configuration — credentials, ignore patterns, settings |
 | `.ai-rigor/standards.md` | Team coding standards — replaces built-in defaults |
-| `.claude/skills/ai-rigor-*/skill.md` | Claude Code agent skills |
+| `.claude/skills/ai-rigor-*/SKILL.md` | Claude Code agent skills |
 | `.agents/skills/ai-rigor-*/SKILL.md` | Codex agent skills |
 | `.agents/skills/ai-rigor-security/references/` | Bundled security best-practice references |
 | `skills/code_review/python/extractors/code_context.py` | Core extractor — pattern all future extractors follow |

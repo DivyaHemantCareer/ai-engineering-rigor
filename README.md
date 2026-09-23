@@ -66,9 +66,9 @@ If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 | Skill | Claude Code | Codex | What it does |
 |-------|-------------|-------|-------------|
 | **Code Review** | `/ai-rigor-review` | `$ai-rigor-review` | Security, performance, quality review. Accepts PR links, commits, or files. |
-| **Test Coverage** | `/ai-rigor-coverage` | `$ai-rigor-coverage` | Find changed functions missing tests, suggest specific test cases |
+| **Test Coverage** | `/ai-rigor-coverage` | `$ai-rigor-coverage` | Find changed functions missing tests, suggest specific test cases (Python, JavaScript/TypeScript, Go) |
 | **Commit Quality** | `/ai-rigor-commit` | `$ai-rigor-commit` | Conventional commit format, scope/file alignment, rewrite suggestions |
-| **Dependency Audit** | `/ai-rigor-deps` | `$ai-rigor-deps` | Unpinned versions, CVEs, unused additions, broken removals |
+| **Dependency Audit** | `/ai-rigor-deps` | `$ai-rigor-deps` | Unpinned versions, lockfile drift, CVEs, unused additions, broken removals (pip/uv, npm/pnpm/Yarn, Go modules) |
 
 ### Delivery Rigor
 
@@ -133,6 +133,8 @@ Clone and open in Claude Code, or copy `.claude/skills/ai-rigor-*` into another 
 ```
 
 Install globally: copy `.claude/skills/ai-rigor-*/` to `~/.claude/skills/`.
+
+> **Upgrading from an older copy:** Claude Code skills are now named `SKILL.md` (previously `skill.md`, which only loads on case-insensitive file systems such as default macOS). Re-run `scripts/install.sh --target /your/repo --platform claude --force` to refresh installed copies.
 
 ### Codex
 
@@ -323,7 +325,7 @@ Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/c
   config.yml                           # Source control, ignore patterns, settings
   standards.md                         # Team coding standards
 
-.claude/skills/ai-rigor-*/skill.md     # Claude Code skills
+.claude/skills/ai-rigor-*/SKILL.md     # Claude Code skills
 .agents/skills/ai-rigor-*/SKILL.md     # Codex skills
 .claude/skills/ai-rigor-*/references/  # Optional bundled templates/guidance
 .agents/skills/ai-rigor-*/references/  # Optional bundled templates/guidance

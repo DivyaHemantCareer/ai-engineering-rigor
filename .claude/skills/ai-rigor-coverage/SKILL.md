@@ -1,18 +1,19 @@
 ---
 name: ai-rigor-coverage
-description: Analyze changed functions and identify missing test coverage -- suggest specific test cases. Supports Python, JavaScript/TypeScript, and Go. Use when the user asks about test coverage, missing tests, or untested code. Reads ignore patterns from .ai-rigor/config.yml.
-argument-hint: [commit-range or file path] -- defaults to HEAD~1
+description: Analyze changed functions and identify missing test coverage — suggest specific test cases. Supports Python, JavaScript/TypeScript, and Go. Reads ignore patterns from .ai-rigor/config.yml.
+allowed-tools: Bash(git *), Read, Grep, Glob
+argument-hint: [commit-range or file path] — defaults to HEAD~1
 ---
 
-# AI Engineering Rigor -- Test Coverage Analysis
+# AI Engineering Rigor — Test Coverage Analysis
 
 Analyze `$ARGUMENTS` (default: `HEAD~1`) for test coverage gaps.
 
 ## Phase 0: Load Config
 
 Check for `.ai-rigor/config.yml`. If it exists, read:
-- `review.ignore` -- file patterns to skip
-- `review.languages` -- limit analysis to these languages (default: auto-detect from extensions)
+- `review.ignore` — file patterns to skip
+- `review.languages` — limit analysis to these languages (default: auto-detect from extensions)
 - Any test conventions from `.ai-rigor/standards.md` (these override the defaults below)
 
 ## Phase 1: Extract Changed Functions
@@ -50,11 +51,11 @@ For each changed function:
 ## Phase 3: Suggest Missing Tests
 
 For each uncovered or weak function, suggest tests in the repo's framework (pytest, Vitest/Jest/node:test/Mocha, Go `testing`):
-- **Happy path** -- expected result for normal input
-- **Edge cases** -- empty, null/None/undefined/nil, boundary values (`>` vs `>=`)
-- **Error paths** -- invalid input, rejected validation, returned errors
-- **Integration** -- DB, API, or filesystem interactions
-- **Invariants** -- any project-specific rules from `.ai-rigor/standards.md`
+- **Happy path** — expected result for normal input
+- **Edge cases** — empty, null/None/undefined/nil, boundary values (`>` vs `>=`)
+- **Error paths** — invalid input, rejected validation, returned errors
+- **Integration** — DB, API, or filesystem interactions
+- **Invariants** — any project-specific rules from `.ai-rigor/standards.md`
 
 ## Output
 
@@ -75,11 +76,11 @@ For each uncovered or weak function, suggest tests in the repo's framework (pyte
 ### Suggested Tests
 
 **`create_user(username, email)`**
-1. `test_create_user_returns_dict` -- verify returns dict with expected fields
-2. `test_create_user_empty_username` -- verify behavior with empty string
+1. `test_create_user_returns_dict` — verify returns dict with expected fields
+2. `test_create_user_empty_username` — verify behavior with empty string
 
 **`parseSignal(input)`**
-1. `it("rejects values at the exclusive threshold")` -- verify `>` rather than `>=`
+1. `it("rejects values at the exclusive threshold")` — verify `>` rather than `>=`
 
 ### Summary
 

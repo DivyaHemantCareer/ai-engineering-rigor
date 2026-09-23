@@ -1,10 +1,11 @@
 ---
 name: ai-rigor-deps
-description: Audit dependency changes for security risk -- unpinned versions, lockfile drift, known vulnerabilities, unnecessary packages. Supports Python, npm/pnpm/Yarn, and Go. Use when the user asks about dependency changes, supply chain risk, or package security. Reads allowed packages from .ai-rigor/config.yml.
-argument-hint: [commit-range] -- defaults to HEAD~1
+description: Audit dependency changes for security risk — unpinned versions, lockfile drift, known vulnerabilities, unnecessary packages. Supports Python, npm/pnpm/Yarn, and Go. Reads allowed packages from .ai-rigor/config.yml.
+allowed-tools: Bash(git *), Bash(pip *), Bash(uv *), Bash(npm ls *), Bash(npm audit *), Bash(npm view *), Bash(pnpm audit *), Bash(yarn audit *), Bash(go list *), Read, Grep, Glob, WebSearch
+argument-hint: [commit-range] — defaults to HEAD~1
 ---
 
-# AI Engineering Rigor -- Dependency Audit
+# AI Engineering Rigor — Dependency Audit
 
 Audit dependency changes in `$ARGUMENTS` (default: `HEAD~1`).
 
@@ -13,8 +14,8 @@ This skill is read-only. Never run a command that installs, updates, or removes 
 ## Phase 0: Load Config
 
 Check for `.ai-rigor/config.yml`. If it exists, read the `deps` section for:
-- `files` -- which dependency files to check (default: auto-detect)
-- `allowed` -- known-good packages that should not be flagged
+- `files` — which dependency files to check (default: auto-detect)
+- `allowed` — known-good packages that should not be flagged
 
 ## Phase 1: Get Dependency Diff
 
@@ -46,25 +47,25 @@ For each **added or version-changed** dependency:
 
 | Ecosystem | Pattern | Risk |
 |-----------|---------|------|
-| Python | `package==1.2.3` | LOW -- exact pin |
-| Python | `package>=1.2,<2.0` | LOW -- bounded |
-| Python | `package>=1.2` | MEDIUM -- unbounded upper |
-| Python | `package` (no version) | HIGH -- unpinned |
-| npm | `1.2.3` | LOW -- exact pin |
+| Python | `package==1.2.3` | LOW — exact pin |
+| Python | `package>=1.2,<2.0` | LOW — bounded |
+| Python | `package>=1.2` | MEDIUM — unbounded upper |
+| Python | `package` (no version) | HIGH — unpinned |
+| npm | `1.2.3` | LOW — exact pin |
 | npm | `~1.2.3` / `^1.2.3` | LOW if lockfile committed, else MEDIUM; MEDIUM if standards require exact pins |
-| npm | `*`, `latest`, `>=`, git/URL/`file:` spec | HIGH -- unbounded or unverifiable |
+| npm | `*`, `latest`, `>=`, git/URL/`file:` spec | HIGH — unbounded or unverifiable |
 | Go | tagged `vX.Y.Z` | LOW |
-| Go | pseudo-version / `replace` to a fork or local path | MEDIUM -- review |
+| Go | pseudo-version / `replace` to a fork or local path | MEDIUM — review |
 
 Cross-ecosystem checks:
-- **Lockfile drift** -- manifest changed without its lockfile (or the reverse) = HIGH
-- **Install scripts** -- new npm package with `hasInstallScript` in the lockfile, or a new `postinstall`/`preinstall` = MEDIUM, review
+- **Lockfile drift** — manifest changed without its lockfile (or the reverse) = HIGH
+- **Install scripts** — new npm package with `hasInstallScript` in the lockfile, or a new `postinstall`/`preinstall` = MEDIUM, review
 - Known CVEs for the added versions
 - Typosquat risk (similar names to popular packages)
 - License compatibility when the project states a license policy
 - Is it necessary, or does the standard library / an existing dependency cover this?
 
-Skip packages listed in `deps.allowed` from config -- these are pre-approved.
+Skip packages listed in `deps.allowed` from config — these are pre-approved.
 
 ## Phase 4: Codebase Cross-Reference
 
@@ -103,7 +104,7 @@ Only when dependencies are already installed locally, run the ecosystem's read-o
 
 ### Risk Flags
 
-**[HIGH] boto3 -- Unpinned dependency**
+**[HIGH] boto3 — Unpinned dependency**
 No version specifier. Future install could pull breaking version.
 **Fix**: Pin to `boto3>=1.28.0,<2.0.0`
 
@@ -113,10 +114,10 @@ No version specifier. Future install could pull breaking version.
 |---------|-----------|-------|
 | boto3 | Yes | app/storage.py |
 | zod | Yes | src/schemas.ts |
-| requests | Still imported | app/client.py -- broken removal |
+| requests | Still imported | app/client.py — broken removal |
 
 ### Vulnerability Scan
-{command run and result, or "not run -- dependencies not installed locally"}
+{command run and result, or "not run — dependencies not installed locally"}
 
 ### Summary
 | Metric | Value |
@@ -129,7 +130,7 @@ No version specifier. Future install could pull breaking version.
 
 ## Rules
 
-- Only flag **real** risks -- don't flag well-known, pinned packages
+- Only flag **real** risks — don't flag well-known, pinned packages
 - Pre-approved packages from config are listed but not flagged
 - Consider transitive/peer dependency implications for removals
 - Keep suggestions actionable with specific version pins
