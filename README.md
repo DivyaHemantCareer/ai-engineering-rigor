@@ -66,7 +66,7 @@ If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 
 | Skill | Claude Code | Codex | What it does |
 |-------|-------------|-------|-------------|
-| **Code Review** | `/ai-rigor-review` | `$ai-rigor-review` | Security, performance, quality review. Accepts PR links, commits, or files. |
+| **Code Review** | `/ai-rigor-review` | `$ai-rigor-review` | Security, performance, quality review. Accepts GitHub PR links or numbers, commit ranges, or files. |
 | **Test Coverage** | `/ai-rigor-coverage` | `$ai-rigor-coverage` | Find changed functions missing tests, suggest specific test cases (Python, JavaScript/TypeScript, Go) |
 | **Commit Quality** | `/ai-rigor-commit` | `$ai-rigor-commit` | Conventional commit format, scope/file alignment, rewrite suggestions |
 | **Dependency Audit** | `/ai-rigor-deps` | `$ai-rigor-deps` | Unpinned versions, lockfile drift, CVEs, unused additions, broken removals (pip/uv, npm/pnpm/Yarn, Go modules) |
@@ -193,7 +193,7 @@ Drop a `.ai-rigor/` folder in any repo to add a team-specific behavior layer. Bo
 
 ### Team Standards (`.ai-rigor/standards.md`)
 
-Write your coding standards in plain markdown. The review skill uses this **instead of** built-in defaults, which lean toward Python/FastAPI, so add a standards file for other stacks.
+Write your coding standards in plain markdown. The review skill uses this **instead of** built-in defaults, which are language-neutral (security, input contracts, correctness, concurrency, quality). Add standards for your stack's framework rules.
 
 ```markdown
 # .ai-rigor/standards.md

@@ -68,7 +68,7 @@ Plain markdown file with team coding conventions. When present, the review skill
 ### `.ai-rigor/config.yml` -- Repo Config
 
 YAML file with:
-- **Source control credentials** (`source_control.ado.org_url`, `source_control.ado.project`) -- enables PR review by number
+- **Source control target** (`source_control.github.owner`, `source_control.github.repo`) -- enables PR review by number via the `gh` CLI; never store credentials here
 - **Ignore patterns** (`review.ignore`) -- skip generated files, migrations, vendor
 - **Commit rules** (`commit.conventional`, `commit.max_subject_length`) -- enforce team conventions
 - **Pre-approved deps** (`deps.allowed`) -- packages that shouldn't be flagged in audits
