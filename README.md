@@ -2,7 +2,7 @@
 
 Portable engineering rigor skills for Claude Code and Codex. Use them in any repository for code review, test coverage, commit quality, dependency audit, delivery workflow rigor, and security best-practice guidance.
 
-Agent skills are zero-dependency: clone, copy, and use. The optional Python library under `skills/` has its own runtime dependencies for CI/programmatic use.
+Agent skills are zero-dependency: install them as a Claude Code plugin, or clone and copy them into a repo. The optional Python library under `skills/` has its own runtime dependencies for CI/programmatic use.
 
 ## Who This Is For
 
@@ -66,7 +66,7 @@ If you copy `ai-rigor-security`, keep its `LICENSE.txt` file with the skill.
 
 | Skill | Claude Code | Codex | What it does |
 |-------|-------------|-------|-------------|
-| **Code Review** | `/ai-rigor-review` | `$ai-rigor-review` | Security, performance, quality review. Accepts PR links, commits, or files. |
+| **Code Review** | `/ai-rigor-review` | `$ai-rigor-review` | Security, performance, quality review. Accepts GitHub PR links or numbers, commit ranges, or files. |
 | **Test Coverage** | `/ai-rigor-coverage` | `$ai-rigor-coverage` | Find changed functions missing tests, suggest specific test cases (Python, JavaScript/TypeScript, Go) |
 | **Commit Quality** | `/ai-rigor-commit` | `$ai-rigor-commit` | Conventional commit format, scope/file alignment, rewrite suggestions |
 | **Dependency Audit** | `/ai-rigor-deps` | `$ai-rigor-deps` | Unpinned versions, lockfile drift, CVEs, unused additions, broken removals (pip/uv, npm/pnpm/Yarn, Go modules) |
@@ -113,7 +113,7 @@ The plugin is versioned in `.claude-plugin/plugin.json`; installed copies update
 
 ### Add To A Repo (copy files)
 
-Use this when the repository must be self-contained (for example, Codex users or offline environments).
+Use this for Codex, or when a repository must carry its own pinned copy of the skills (for example, when contributors cannot reach GitHub plugin marketplaces).
 
 From this repo:
 
@@ -128,7 +128,7 @@ scripts/install.sh --target /your/repo --platform codex
 scripts/install.sh --target /your/repo --skills review,security --with-config
 ```
 
-The install script only copies files. It does not install packages or dependencies.
+The install script only copies files. It does not install packages or dependencies. With `--with-config`, edit the copied `.ai-rigor/standards.md` and `.ai-rigor/config.yml` for your team.
 
 Then open `/your/repo` in Codex or Claude Code. Skills are auto-detected from the copied folders.
 
@@ -140,13 +140,13 @@ scripts/install.sh --help
 
 ### Claude Code
 
-Clone and open in Claude Code, or copy `.claude/skills/ai-rigor-*` into another repo.
+Clone and open in Claude Code, or copy `.claude/skills/ai-rigor-*` into another repo. The examples use copied-skill names; with the plugin, prefix them as `/ai-rigor:ai-rigor-review`.
 
 ```
 # Review a PR (paste any GitHub PR link)
 /ai-rigor-review https://github.com/org/repo/pull/42
 
-# Review by PR number (uses config for org/project)
+# Review by PR number (uses source_control in .ai-rigor/config.yml)
 /ai-rigor-review 42
 
 # Review last commit
@@ -163,7 +163,7 @@ Clone and open in Claude Code, or copy `.claude/skills/ai-rigor-*` into another 
 /ai-rigor-dev "Implement password reset"
 ```
 
-Install globally: copy `.claude/skills/ai-rigor-*/` to `~/.claude/skills/`.
+Install globally without the plugin: copy `.claude/skills/ai-rigor-*/` to `~/.claude/skills/`.
 
 > **Upgrading from an older copy:** Claude Code skills are now named `SKILL.md` (previously `skill.md`, which only loads on case-insensitive file systems such as default macOS). Re-run `scripts/install.sh --target /your/repo --platform claude --force` to refresh installed copies.
 
@@ -193,7 +193,7 @@ Drop a `.ai-rigor/` folder in any repo to add a team-specific behavior layer. Bo
 
 ### Team Standards (`.ai-rigor/standards.md`)
 
-Write your coding standards in plain markdown. The review skill uses this **instead of** built-in defaults.
+Write your coding standards in plain markdown. The review skill uses this **instead of** built-in defaults, which are language-neutral (security, input contracts, correctness, concurrency, quality). Add standards for your stack's framework rules.
 
 ```markdown
 # .ai-rigor/standards.md
@@ -224,7 +224,7 @@ Example standards you can adapt:
 
 ### Repo Config (`.ai-rigor/config.yml`)
 
-Configure source control credentials, ignore patterns, and skill-specific settings.
+Configure the source-control target, ignore patterns, and skill-specific settings. Never put tokens or credentials in this file; PR access uses your existing `gh` login.
 
 ```yaml
 # .ai-rigor/config.yml
@@ -239,6 +239,7 @@ source_control:
 # Review settings
 review:
   standards_file: .ai-rigor/standards.md           # path to standards
+  # languages: [python, typescript, go]             # coverage/review scope (default: auto-detect)
   ignore:                                           # files to skip
     - "*.generated.*"
     - "*.min.js"
@@ -265,7 +266,7 @@ deps:
 | Skill | `config.yml` sections | `standards.md` |
 |-------|----------------------|----------------|
 | **Code Review** | `source_control`, `review.ignore` | Yes -- replaces built-in standards |
-| **Test Coverage** | `review.ignore` | Test conventions section |
+| **Test Coverage** | `review.ignore`, `review.languages` | Test conventions section |
 | **Commit Quality** | `commit.*` | Git/PR conventions section |
 | **Dependency Audit** | `deps.allowed`, `deps.files` | No |
 | **Development Rigor** | General repo preferences | Yes -- implementation standards |
@@ -328,27 +329,6 @@ Multi-file PR (3 files, new code)      1147      1128        1.7%
 uv run --extra dev python benchmarks/token_benchmark.py
 ```
 
-## Publishing to Another Repo
-
-Use the install script:
-
-```bash
-scripts/install.sh --target /your/repo --platform both --with-config
-```
-
-Or copy the skills and optionally the config template manually. You can copy all skills or a subset:
-
-```bash
-# Skills (pick your platform)
-cp -r .claude/skills/ai-rigor-* /your/repo/.claude/skills/    # Claude Code
-cp -r .agents/skills/ai-rigor-* /your/repo/.agents/skills/    # Codex
-
-# Config template (optional -- customize for your team)
-cp -r .ai-rigor /your/repo/.ai-rigor
-```
-
-Then edit `.ai-rigor/standards.md` with your team's conventions and `.ai-rigor/config.yml` with your GitHub credentials.
-
 ## Repo Structure
 
 ```
@@ -379,12 +359,18 @@ benchmarks/                            # Token reduction benchmark
 - Hits specific dimensions (security, auth, types, performance) that generic reviews miss
 - Context extraction keeps token cost down on large PRs
 - PR link support -- review any GitHub PR from the conversation
-- Works on any repo -- just copy the skill files
+- Works on any repo -- install the Claude Code plugin or copy the skill files
 
 **What it doesn't do:**
 - Replace human reviewers -- it's a second opinion, not a gate
 - Guarantee finding all bugs -- LLMs miss things
 - Work offline -- requires Claude Code or Codex running
+
+## Contributing
+
+- Keep `.claude/skills/` and `.agents/skills/` in sync: same content, with Codex frontmatter using `Use when...` descriptions and no `allowed-tools`.
+- Keep skills generic; project-specific rules belong in a consumer's `.ai-rigor/`.
+- Bump `version` in `.claude-plugin/plugin.json` for any skill change so plugin users receive it, then run `claude plugin validate .`.
 
 ## License
 
